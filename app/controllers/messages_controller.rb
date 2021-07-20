@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
     message = Message.new(message_params)
     message.user_id = 2
     if message.save
-      redirect_to root_path
+      ActionCable.server.broadcast "chatroom_channel", mod_message: message_render(message)
     end
   end
 
@@ -16,6 +16,10 @@ class MessagesController < ApplicationController
       :body,
       :user_id
     )
+  end
+
+  def message_render(message)
+    render(partial: 'message', locals: {message: message})
   end
 
 end
